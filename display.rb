@@ -1,11 +1,34 @@
 class Display
 
   def initialize(board)
-    @board = board
-    @cursor = nil
+    @chessboard = board
+    @cursor = [4,4]
     @selected = nil
   end
 
+
+  def board_colors(coords)
+    pos = coords.inject(:+)
+    if pos % 2 == 0
+      @chessboard[coords].to_s.colorize(:background => :red)
+    else
+      @chessboard[coords].to_s.colorize(:background => :black)
+    end
+  end
+
+  # def render
+  #   @chessboard.grid.each do |row|
+  #     row.each do |col|
+  #       print board_colors(@chessboard[[row, col]])
+  #     end
+  #     puts
+  #   end
+  # end
+  def render_chessboard
+    @chessboard.grid.each do |row|
+      p row
+    end
+  end
   # Reads keypresses from the user including 2 and 3 escape character sequences.
   def read_char
     STDIN.echo = false

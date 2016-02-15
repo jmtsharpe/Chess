@@ -1,59 +1,118 @@
 
 
 class Piece
-  attr_accessor :pos
-  
-  def initialize(pos, color)
+  attr_reader :pos
+  DELTAS = [-1,-1,0,1,1]permutation(2).to_a.uniq
+
+  def initialize(board, pos, color)
+    @board = board
     @pos = pos
     @color = color
+    @name = self.class.to_s
+    @valid_moves = []
+  end
+
+  def check_moves
+    #THROW ERROR
+  end
+
+  def pos=(coords)
+    @pos = coords
+    valid_moves
+    # cache valid moves
+  end
+
+  def inspect
+    "#{@color} #{@name}: #{@pos}"
+  end
+
+  def to_s
+    "#{name[0]}#{name[-1]}"
+  end
+
+  def self.add_coords(coords1, coords2)
+    [coords1[0] + coords2[0], coords1[1] + coords2[1]]
+  end
+
+  def collision?(coords)
+    !@board[coords].empty?
+  end
+
+  def in_bounds?(coords)
+    coords.all? do |coord|
+      (0..7).cover? coord
+    end
   end
 
 end
 
-class King < Piece
+class SlidingPiece < Piece
+  def valid_moves
+    checks
+  end
 
-  def inspect
-    "#{@color} King: #{@pos}"
+  def look_around
+    @valid_moves = []
+
+    DELTAS.each do |move|
+      #pass = true
+      step = Piece.add_coords(move, @pos)
+
+      while in_bounds? step
+        if collision?(step) && @board[step].color != @color
+          @valid_moves << step
+          break
+        elsif collision?(move)
+          break
+        else
+          @valid_moves << step
+          step = Piece.add_coords(move, step)
+        end
+      end
+
+    end
+
   end
 
 end
 
-class Queen < Piece
+class SteppingPiece < Piece
 
-  def inspect
-    "#{@color} Queen: #{@pos}"
-  end
 
 end
 
-class Bishop < Piece
+class King < SteppingPiece
 
-  def inspect
-    "#{@color} Bishop: #{@pos}"
-  end
+
 
 end
 
-class Knight < Piece
+class Queen < SlidingPiece
 
-  def inspect
-    "#{@color} Knight: #{@pos}"
-  end
+
 
 end
 
-class Rook < Piece
+class Bishop < SlidingPiece
 
-  def inspect
-    "#{@color} Rook: #{@pos}"
-  end
+
 
 end
 
-class Pawn < Piece
+class Knight < SteppingPiece
 
-  def inspect
-    "#{@color} Pawn: #{@pos}"
-  end
+
+
+end
+
+class Rook < SlidingPiece
+
+
+
+end
+
+class Pawn < SteppingPiece
+
+
 
 end

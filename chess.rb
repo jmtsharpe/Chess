@@ -1,8 +1,13 @@
-require './board.rb'
+require 'io/console'
 require 'colorize'
+
+require './board.rb'
 require './piece.rb'
 require './display.rb'
-require 'io/console'
+
+class ChessError < StandardError
+end
 
 game = Board.new
-game.board
+d = Display.new(game)
+d.render_chessboard
