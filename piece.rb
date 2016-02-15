@@ -1,7 +1,7 @@
 
 
 class Piece
-  attr_reader :pos
+  attr_reader :pos, :valid_moves
   DELTAS = [-1,-1,0,1,1]permutation(2).to_a.uniq
 
   def initialize(board, pos, color)
@@ -47,11 +47,9 @@ class Piece
 end
 
 class SlidingPiece < Piece
-  def valid_moves
-    checks
-  end
 
-  def look_around
+
+  def get_slides
     @valid_moves = []
 
     DELTAS.each do |move|
@@ -78,6 +76,12 @@ end
 
 class SteppingPiece < Piece
 
+  def get_steps
+    @valid_moves = DELTAS.map do |move|
+      Piece.add_coords(move, @pos)
+    end
+    @valid_moves.select!(&:in_bounds?)
+  end
 
 end
 
