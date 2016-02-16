@@ -4,9 +4,9 @@ require './board.rb'
 require './piece.rb'
 require './display.rb'
 require './player.rb'
+require './chess_helper'
 
-class ChessError < StandardError
-end
+
 
 class ChessGame
 
@@ -32,6 +32,8 @@ class ChessGame
   end
 
 end
+
+
 
 game = ChessGame.new(Board.new)
 game.run

@@ -54,6 +54,28 @@ class Board
     false
   end
 
+  def checkmate?(color)
+    return false unless in_check?(color)
+    #board_in_stasis = @rows.deep_dup
+    select_pieces(color).each do |piece|
+      piece.movement.each do |move|
+        #FIX INBOUNDS PIECES
+        return false if break_check?(piece, move, color)
+      end
+    end
+    true
+  end
+
+  def break_check?(piece, move, color)
+    origin = piece.pos
+    self[origin] = BLANK_SPACE
+    self[move] = piece
+    break_check = in_check?(color)
+    self[move] = BLANK_SPACE
+    self[origin] = piece
+    break_check
+  end
+
   def select_pieces(color)
     @rows.flatten.select do |tile|
       tile.is_a?(Piece) && tile.color == color
