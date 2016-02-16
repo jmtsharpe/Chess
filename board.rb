@@ -56,10 +56,8 @@ class Board
 
   def checkmate?(color)
     return false unless in_check?(color)
-    #board_in_stasis = @rows.deep_dup
     select_pieces(color).each do |piece|
       piece.movement.each do |move|
-        #FIX INBOUNDS PIECES
         return false if break_check?(piece, move, color)
       end
     end

@@ -42,6 +42,10 @@ class Piece
     raise ChessError.new("This is not a real Piece")
   end
 
+  def get_bounds
+    @moves.select! { |coord| @board.in_bounds?(coord) }
+  end
+
 end
 
 
@@ -66,6 +70,7 @@ module SlidingPiece
         tile = Piece.add_coords(tile, move)
       end
     end
+    get_bounds
     @moves
   end
 
@@ -78,6 +83,7 @@ module SteppingPiece
     @moves = get_local_movement.map do |move|
       Piece.add_coords(@pos, move)
     end
+    get_bounds
     @moves
   end
 end
@@ -133,6 +139,7 @@ class Pawn < Piece
     @moves = []
     @moves.push pawn_movement
     @moves.push *pawn_attack
+    get_bounds
     @moves
   end
 

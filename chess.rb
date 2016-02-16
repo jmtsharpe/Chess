@@ -23,12 +23,20 @@ class ChessGame
   end
 
   def run
-    turns = 10
-    until turns == 0
-      turns -= 1
+    until checkmate?
       @players[0].take_turn
       toggle_players
     end
+    victory_conditions
+  end
+
+  def checkmate?
+    @chessboard.checkmate?(@players[0].color)
+  end
+
+  def victory_conditions
+    puts "#{@players[0].color.to_s.capitalize} topples their King"
+    puts "#{@players[1].color.to_s.capitalize} Wins!"
   end
 
 end
