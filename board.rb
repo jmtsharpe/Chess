@@ -1,7 +1,7 @@
 
 class Board
   attr_accessor :rows
-
+  BLANK_SPACE = "   "
   def initialize
     @rows = generate_board
     #check_all_moves
@@ -23,7 +23,7 @@ class Board
     @rows[row][col] = mark
   end
 
-  def move(start, finish)
+  def move(start, moveto)
     piece = grab_peice(start)
     move_piece(piece, moveto)
   rescue ChessError => e
@@ -40,10 +40,12 @@ class Board
     end
   end
 
+
   def move_piece(piece, moveto)
     if piece#.valid_moves.include?(moveto)
-      piece.pos = [moveto]
-      self[piece.pos] = nil
+
+      self[piece.pos] = BLANK_SPACE
+      piece.pos = moveto
       self[moveto] = piece
       #check_all_moves
     else
@@ -67,7 +69,7 @@ class Board
         elsif row == 1 || row == 6
           pawn_row([row,col])
         else
-          "   "
+          BLANK_SPACE
         end
       end
     end

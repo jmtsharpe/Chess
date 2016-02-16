@@ -31,7 +31,7 @@ class Display
   end
 
   def render
-    system("clear")
+    #system("clear")
     puts "CHESS"
     puts "Arrow keys, WASD, or vim to move, space or enter to confirm."
     build_grid.each { |row| puts row.join }
