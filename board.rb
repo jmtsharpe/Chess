@@ -25,11 +25,11 @@ class Board
 
   def move(movefrom, moveto)
     piece = self[movefrom]
-    if piece#.valid_moves.include?(moveto)
+    piece.movement
+    if piece.moves.include?(moveto)
       self[piece.pos] = BLANK_SPACE
       piece.pos = moveto
       self[moveto] = piece
-      #check_all_moves
     else
       raise ChessError.new("That is not a valid move for this piece")
     end
@@ -41,8 +41,29 @@ class Board
     end
   end
 
-  def empty?(coord)
-    self[coord] == BLANK_SPACE
+  def empty?(coords)
+    self[coords] == BLANK_SPACE
+  end
+
+  def in_check?(color)
+    opp_color = color == :white ? :black : :white
+    throne = find_king(color).pos
+    select_pieces(opp_color).each do |piece|
+      return true if piece.movement.include?(throne)
+    end
+    false
+  end
+
+  def select_pieces(color)
+    @rows.flatten.select do |tile|
+      tile.is_a?(Piece) && tile.color == color
+    end
+  end
+
+  def find_king(color)
+    @rows.flatten.select do |tile|
+      tile.is_a?(King) && tile.color == color
+    end.pop
   end
 
   private

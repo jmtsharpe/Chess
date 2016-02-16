@@ -12,7 +12,8 @@ class Player
     result = nil
     until result
       @display.render
-      puts @color == :white ? "⚪" : "⚫"
+      print @color == :white ? "⚪ " : "⚫ "
+      puts "#{@color} in check? #{@board.in_check?(@color)}"
       result = @display.get_input
     end
     result

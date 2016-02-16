@@ -1,7 +1,8 @@
 require "byebug"
 
 class Piece
-  attr_reader :pos, :moves, :color, :name
+  attr_reader :pos, :color, :name
+  attr_accessor :moves
 
   def initialize(board, pos, color)
     @board = board
@@ -46,113 +47,113 @@ end
 
 module SlidingPiece
 
-  Crossways = [ [0, 1], [1, 0], [0, -1], [-1, 0] ]
-  Diagonals = [ [1, 1], [-1, -1], [1, -1], [-1, 1] ]
+  CROSSWAYS = [ [0, 1], [1, 0], [0, -1], [-1, 0] ]
+  DIAGONALS = [ [1, 1], [-1, -1], [1, -1], [-1, 1] ]
 
   def movement
-    Local_movement.map do |move|
+    @moves = []
+    get_local_movement.map do |move|
       tile = Piece.add_coords(@pos, move)
       while @board.in_bounds?(tile)
-        @moves << tile if @board[tile].empty?
-
-        if @board[tile].color == @color
+        if @board.empty?(tile)
+          @moves << tile
+        elsif @board[tile].color == @color
           break
         else
           @moves << tile
           break
         end
-
-
+        tile = Piece.add_coords(tile, move)
+      end
     end
+    @moves
   end
 
-  # def get_moves
-  #   @valid_moves = []
-  #
-  #   DELTAS.each do |move|
-  #     #pass = true
-  #     step = Piece.add_coords(move, @pos)
-  #
-  #     while in_bounds? step
-  #
-  #
-  #       if collision?(step) && @board[step].color != @color
-  #         @valid_moves << step
-  #         break
-  #       elsif collision?(move)
-  #         break
-  #       else
-  #         @valid_moves << step
-  #         step = Piece.add_coords(move, step)
-  #       end
-  #     end
-  #   end
-  # end
 end
 
 module SteppingPiece
 
-  # @localized movement is an array of the peices allowed moves
-  # generalized to [0,0]
   def movement
-    @moves = Local_movement.map do |move|
+    @moves = []
+    @moves = get_local_movement.map do |move|
       Piece.add_coords(@pos, move)
     end
+    @moves
   end
 end
 
 class King < Piece
   include SteppingPiece
 
-  Local_movement = [
-    [0, 1],
-    [1, 0],
-    [0, -1],
-    [-1, 0],
-    [1, 1],
-    [1, -1],
-    [-1, 1],
-    [-1, -1]
-  ]
+  def get_local_movement
+    [[0, 1],[1, 0],[0, -1],[-1, 0],[1, 1],[1, -1],[-1, 1],[-1, -1]]
+  end
 
 end
 
 class Queen < Piece
   include SlidingPiece
 
+  def get_local_movement
+    SlidingPiece::CROSSWAYS + SlidingPiece::DIAGONALS
+  end
 
 end
 
 class Bishop < Piece
   include SlidingPiece
 
+  def get_local_movement
+    SlidingPiece::DIAGONALS
+  end
 
 end
 
 class Knight < Piece
   include SteppingPiece
 
-  Local_movement = [
-    [1, 2],
-    [2, 1],
-    [-1, 2],
-    [2, -1],
-    [-2, 1],
-    [1, -2],
-    [-1, -2],
-    [-2, -1]
-  ]
+  def get_local_movement
+    [[1, 2],[2, 1],[-1, 2],[2, -1],[-2, 1],[1, -2],[-1, -2],[-2, -1]]
+  end
 
 end
 
 class Rook < Piece
   include SlidingPiece
 
+  def get_local_movement
+    SlidingPiece::CROSSWAYS
+  end
 
 end
 
 class Pawn < Piece
-  include SteppingPiece
 
+  def movement
+    @moves = []
+    @moves.push pawn_movement
+    @moves.push *pawn_attack
+    @moves
+  end
+
+  def get_local_movement
+    @color == :black ? [1,0] : [-1,0]
+  end
+
+  def pawn_movement
+    move = Piece.add_coords(@pos, get_local_movement)
+    return [] unless @board.empty?(move)
+    move
+  end
+
+  def pawn_attack
+    attack_pos = @colors == :black ? [[1,-1], [1,1]] : [[-1,-1], [-1,1]]
+    attack_pos.map! do |move|
+      Piece.add_coords(@pos, move)
+    end
+    attack_pos.reject do |coords|
+      @board.empty?(coords)
+    end
+  end
 
 end
