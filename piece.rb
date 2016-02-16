@@ -1,25 +1,18 @@
-
+require "byebug"
 
 class Piece
-  attr_reader :pos, :valid_moves
-  DELTAS = [-1,-1,0,1,1]permutation(2).to_a.uniq
+  attr_reader :pos, :valid_moves, :color
+  DELTAS = [-1,-1,0,1,1].permutation(2).to_a.uniq
 
   def initialize(board, pos, color)
     @board = board
     @pos = pos
     @color = color
     @name = self.class.to_s
-    @valid_moves = []
-  end
-
-  def check_moves
-    #THROW ERROR
   end
 
   def pos=(coords)
     @pos = coords
-    valid_moves
-    # cache valid moves
   end
 
   def inspect
@@ -35,7 +28,7 @@ class Piece
   end
 
   def collision?(coords)
-    !@board[coords].empty?
+    @board[coords].is_a?(Piece)
   end
 
   def in_bounds?(coords)
@@ -44,12 +37,16 @@ class Piece
     end
   end
 
+  def get_moves
+    raise ChessError.new("This piece has no moves")
+  end
+
 end
 
 class SlidingPiece < Piece
 
 
-  def get_slides
+  def get_moves
     @valid_moves = []
 
     DELTAS.each do |move|
@@ -57,6 +54,8 @@ class SlidingPiece < Piece
       step = Piece.add_coords(move, @pos)
 
       while in_bounds? step
+
+
         if collision?(step) && @board[step].color != @color
           @valid_moves << step
           break
@@ -76,11 +75,11 @@ end
 
 class SteppingPiece < Piece
 
-  def get_steps
+  def get_moves
     @valid_moves = DELTAS.map do |move|
       Piece.add_coords(move, @pos)
     end
-    @valid_moves.select!(&:in_bounds?)
+    @valid_moves.select!{ |move| in_bounds?(move) }
   end
 
 end

@@ -4,6 +4,13 @@ class Board
 
   def initialize
     @grid = generate_board
+    check_all_moves
+  end
+
+  def check_all_moves
+    @grid.flatten.each do |tile|
+      tile.get_moves if tile.is_a?(Piece)
+    end
   end
 
   def [](pos)
@@ -18,7 +25,7 @@ class Board
 
   def move(start, finish)
     piece = grab_peice(start)
-    move_piece(piece, finish)
+    move_piece(piece, moveto)
   rescue ChessError => e
     puts e.message
   end
@@ -31,21 +38,17 @@ class Board
     end
   end
 
-  def move_piece(piece, finish)
-    if piece.valid_moves#.include?(self[finish])
-      piece.pos = [finish]
-      self[start] = nil
-      self[finish] = piece
+  def move_piece(piece, moveto)
+    if piece.valid_moves.include?(moveto)
+      piece.pos = [moveto]
+      self[piece.pos] = nil
+      self[moveto] = piece
+      check_all_moves
     else
       raise ChessError.new("That is not a valid move for this piece")
     end
   end
 
-  def empty?(coords)
-
-    self[coords].nil?
-
-  end
 
 
   private

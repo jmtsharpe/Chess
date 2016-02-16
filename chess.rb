@@ -7,7 +7,3 @@ require './display.rb'
 
 class ChessError < StandardError
 end
-
-game = Board.new
-d = Display.new(game)
-d.render_chessboard
