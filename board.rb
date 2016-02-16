@@ -41,6 +41,10 @@ class Board
     end
   end
 
+  def empty?(coord)
+    self[coord] == BLANK_SPACE
+  end
+
   private
 
   def generate_board
