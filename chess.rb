@@ -43,13 +43,13 @@ class ChessGame
 
 end
 
-# board = Board.new
-# board.move([1,1], [2,1])
-# board.move([2,1], [3,1])
-# board.move([1,2], [2,2])
-# board.move([6,3], [5,3])
-# board.move([7,4], [3,0])
-#
-#
-# game = ChessGame.new(board)
-# game.run
+board = Board.new
+board.move([1,1], [2,1])
+board.move([2,1], [3,1])
+board.move([1,2], [2,2])
+board.move([6,3], [5,3])
+board.move([7,4], [3,0])
+
+
+game = ChessGame.new(board)
+game.run

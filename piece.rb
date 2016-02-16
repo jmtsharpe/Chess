@@ -137,15 +137,11 @@ class Rook < Piece
 end
 
 class Pawn < Piece
-  def get_bounds
-    @moves.select! { |coord| @board.in_bounds?(coord) }
-  end
 
   def movement
     @moves = []
     @moves.push pawn_movement
     @moves.push *pawn_attack
-    get_bounds
     @moves
   end
 
@@ -161,11 +157,9 @@ class Pawn < Piece
 
   def pawn_attack
     attack_pos = @colors == :black ? [[1,-1], [1,1]] : [[-1,-1], [-1,1]]
-    attack_pos.map! do |move|
-      Piece.add_coords(@pos, move)
-    end
-    attack_pos.reject do |coords|
-      @board.empty?(coords)
+    attack_pos.map! { |move| Piece.add_coords(@pos, move) }
+    attack_pos.reject! do |coords|
+      @board.empty?(coords) || !@board.in_bounds?(coord)
     end
   end
 

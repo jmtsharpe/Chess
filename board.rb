@@ -9,6 +9,13 @@ class Board
     #check_all_moves
   end
 
+  def inspect
+    @rows.each do |row|
+      p row.map{|el| el == BLANK_SPACE ? "                " : el}
+    end
+    nil
+  end
+
   def check_all_moves
     @rows.flatten.each do |tile|
       tile.get_moves if tile.is_a?(Piece)
@@ -55,6 +62,7 @@ class Board
     opp_color = color == :white ? :black : :white
     throne = find_king(color).pos
     select_pieces(opp_color).each do |piece|
+      debugger if piece.is_a? Queen
       return true if piece.movement.include?(throne)
     end
     false
@@ -70,7 +78,7 @@ class Board
     true
   end
 
-  def break_check?(piece, move, color)
+  def break_check?(piece, moveto, color)
     dupped = dup_board
     dupped.direct_move(piece, moveto)
     good_move = !dupped.in_check?(color)
