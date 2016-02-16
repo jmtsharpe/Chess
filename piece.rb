@@ -1,7 +1,7 @@
 require "byebug"
 
 class Piece
-  attr_reader :pos, :valid_moves, :color
+  attr_reader :pos, :valid_moves, :color, :name
   DELTAS = [-1,-1,0,1,1].permutation(2).to_a.uniq
 
   def initialize(board, pos, color)
@@ -20,7 +20,7 @@ class Piece
   end
 
   def to_s
-    "#{name[0]}#{name[-1]}"
+    (name[0] + name[1]).colorize(@color.to_sym)
   end
 
   def self.add_coords(coords1, coords2)
@@ -43,6 +43,8 @@ class Piece
   end
 
 end
+
+
 
 class SlidingPiece < Piece
 
@@ -90,36 +92,48 @@ end
 
 class King < SteppingPiece
 
-
+  def to_s
+    " ♚ ".colorize(@color)
+  end
 
 end
 
 class Queen < SlidingPiece
 
-
+  def to_s
+    " ♛ ".colorize(@color)
+  end
 
 end
 
 class Bishop < SlidingPiece
 
-
+  def to_s
+    " ♝ ".colorize(@color)
+  end
 
 end
 
 class Knight < SteppingPiece
 
-
+  def to_s
+    " ♞ ".colorize(@color)
+  end
 
 end
 
 class Rook < SlidingPiece
 
-
+  def to_s
+    " ♜ ".colorize(@color)
+  end
 
 end
 
 class Pawn < SteppingPiece
 
-
+  def to_s
+    " ♟ ".colorize(@color)
+  end
 
 end

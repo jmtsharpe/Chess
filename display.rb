@@ -21,12 +21,20 @@ class Display
 
   def colors_for(i, j)
     if [i, j] == @cursor_pos
-      bg = :light_red
+      bg = :yellow
     elsif (i + j).odd?
-      bg = :light_blue
+      bg = :light_white
     else
-      bg = :blue
+      bg = :gray
     end
-    { background: bg, color: :white }
+    { background: bg }
   end
+
+  def render
+    system("clear")
+    puts "CHESS"
+    puts "Arrow keys, WASD, or vim to move, space or enter to confirm."
+    build_grid.each { |row| puts row.join }
+  end
+
 end

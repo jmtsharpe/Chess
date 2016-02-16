@@ -7,3 +7,7 @@ require './player.rb'
 
 class ChessError < StandardError
 end
+
+chessboard = Board.new
+player = Player.new(chessboard)
+player.move

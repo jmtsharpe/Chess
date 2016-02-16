@@ -1,26 +1,26 @@
 
 class Board
-  attr_accessor :grid
+  attr_accessor :rows
 
   def initialize
-    @grid = generate_board
-    check_all_moves
+    @rows = generate_board
+    #check_all_moves
   end
 
   def check_all_moves
-    @grid.flatten.each do |tile|
+    @rows.flatten.each do |tile|
       tile.get_moves if tile.is_a?(Piece)
     end
   end
 
   def [](pos)
     row, col = pos
-    @grid[row][col]
+    @rows[row][col]
   end
 
   def []=(pos, mark)
     row, col = pos
-    @grid[row][col] = mark
+    @rows[row][col] = mark
   end
 
   def move(start, finish)
@@ -41,11 +41,11 @@ class Board
   end
 
   def move_piece(piece, moveto)
-    if piece.valid_moves.include?(moveto)
+    if piece#.valid_moves.include?(moveto)
       piece.pos = [moveto]
       self[piece.pos] = nil
       self[moveto] = piece
-      check_all_moves
+      #check_all_moves
     else
       raise ChessError.new("That is not a valid move for this piece")
     end
@@ -66,6 +66,8 @@ class Board
           command_row([row,col])
         elsif row == 1 || row == 6
           pawn_row([row,col])
+        else
+          "   "
         end
       end
     end
