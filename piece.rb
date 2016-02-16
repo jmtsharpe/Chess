@@ -2,7 +2,6 @@ require "byebug"
 
 class Piece
   attr_reader :pos, :valid_moves, :color, :name
-  DELTAS = [-1,-1,0,1,1].permutation(2).to_a.uniq
 
   def initialize(board, pos, color)
     @board = board
@@ -10,6 +9,16 @@ class Piece
     @color = color
     @name = self.class.to_s
   end
+
+  DisplayPiece = {
+    "King" => " ♚ "
+    "Queen" => " ♛ "
+    "Bishop" => " ♝ "
+    "Knight" => " ♞ "
+    "Rook" => " ♜ "
+    "Pawn" => " ♟ "
+    "Piece" => "bad"
+  }
 
   def pos=(coords)
     @pos = coords
@@ -20,22 +29,11 @@ class Piece
   end
 
   def to_s
-    (name[0] + name[1]).colorize(@color.to_sym)
+    DisplayPiece[@name].colorize(@color))
   end
 
   def self.add_coords(coords1, coords2)
     [coords1[0] + coords2[0], coords1[1] + coords2[1]]
-  end
-
-  #PROBABLY MOVE?
-  def collision?(coords)
-    @board[coords].is_a?(Piece)
-  end
-
-  def in_bounds?(coords)
-    coords.all? do |coord|
-      (0..7).cover? coord
-    end
   end
 
   def get_moves
@@ -45,10 +43,10 @@ class Piece
 end
 
 
+module SlidingPiece
 
-class SlidingPiece < Piece
-
-  #MODULARIZAE
+  Crossways = [ [0, 1], [1, 0], [0, -1], [-1, 0] ]
+  Diagonals = [ [1, 1], [-1, -1], [1, -1], [-1, 1] ]
 
   def get_moves
     @valid_moves = []
@@ -70,17 +68,12 @@ class SlidingPiece < Piece
           step = Piece.add_coords(move, step)
         end
       end
-
     end
-
   end
-
 end
 
-class SteppingPiece < Piece
+module SteppingPiece
 
-  #REMOVE CONSTANTS USE PEICES LOGIC
-  #DITTO
   def get_moves
     @valid_moves = DELTAS.map do |move|
       Piece.add_coords(move, @pos)
@@ -90,50 +83,38 @@ class SteppingPiece < Piece
 
 end
 
-class King < SteppingPiece
+class King
+  include SteppingPiece
 
-  def to_s
-    " ♚ ".colorize(@color)
-  end
 
 end
 
-class Queen < SlidingPiece
+class Queen
+  include SlidingPiece
 
-  def to_s
-    " ♛ ".colorize(@color)
-  end
 
 end
 
-class Bishop < SlidingPiece
+class Bishop
+  include SlidingPiece
 
-  def to_s
-    " ♝ ".colorize(@color)
-  end
 
 end
 
-class Knight < SteppingPiece
+class Knight
+  include SteppingPiece
 
-  def to_s
-    " ♞ ".colorize(@color)
-  end
 
 end
 
-class Rook < SlidingPiece
+class Rook
+  include SlidingPiece
 
-  def to_s
-    " ♜ ".colorize(@color)
-  end
 
 end
 
-class Pawn < SteppingPiece
+class Pawn
+  include SteppingPiece
 
-  def to_s
-    " ♟ ".colorize(@color)
-  end
 
 end
