@@ -27,6 +27,7 @@ class Piece
     [coords1[0] + coords2[0], coords1[1] + coords2[1]]
   end
 
+  #PROBABLY MOVE?
   def collision?(coords)
     @board[coords].is_a?(Piece)
   end
@@ -45,6 +46,7 @@ end
 
 class SlidingPiece < Piece
 
+  #MODULARIZAE
 
   def get_moves
     @valid_moves = []
@@ -75,6 +77,8 @@ end
 
 class SteppingPiece < Piece
 
+  #REMOVE CONSTANTS USE PEICES LOGIC
+  #DITTO
   def get_moves
     @valid_moves = DELTAS.map do |move|
       Piece.add_coords(move, @pos)

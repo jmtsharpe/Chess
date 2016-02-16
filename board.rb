@@ -30,6 +30,8 @@ class Board
     puts e.message
   end
 
+  # IN BOUNDS GOES HERE
+
   def grab_peice(start)
     if self[start] == nil
       raise ChessError.new("There is no piece at this position")
@@ -49,7 +51,11 @@ class Board
     end
   end
 
-
+  def in_bounds?(coords)
+    coords.all? do |coord|
+      (0..7).cover? coord
+    end
+  end
 
   private
 
