@@ -12,19 +12,24 @@ class Player
     result = nil
     until result
       @display.render
+      puts @color == :white ? "⚪" : "⚫"
       result = @display.get_input
     end
     result
   end
 
   def take_turn
-    piece = get_peice
+    movefrom = make_selection
     moveto = move
-    @board.move(piece, moveto)
+    @board.move(movefrom, moveto)
     @display.render
+  rescue ChessError => e
+    puts e.message
+    puts "Move cancelled. Select again."
+    retry
   end
 
-  def get_peice
+  def make_selection
     piece = parse_selection(move)
   rescue ChessError => e
     puts e.message
@@ -32,10 +37,8 @@ class Player
   end
 
   def parse_selection(coords)
-    p coords
-    p @color
     if !@board[coords].is_a? Piece
-      raise ChessError.new("No piece selected")
+      raise ChessError.new("There is no piece at this position")
     elsif @board[coords].color != @color
       raise ChessError.new("Not a #{@color} piece.")
     else

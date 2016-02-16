@@ -23,27 +23,9 @@ class Board
     @rows[row][col] = mark
   end
 
-  def move(start, moveto)
-    piece = grab_peice(start)
-    move_piece(piece, moveto)
-  rescue ChessError => e
-    puts e.message
-  end
-
-  # IN BOUNDS GOES HERE
-
-  def grab_peice(start)
-    if self[start] == nil
-      raise ChessError.new("There is no piece at this position")
-    else
-      self[start]
-    end
-  end
-
-
-  def move_piece(piece, moveto)
+  def move(movefrom, moveto)
+    piece = self[movefrom]
     if piece#.valid_moves.include?(moveto)
-
       self[piece.pos] = BLANK_SPACE
       piece.pos = moveto
       self[moveto] = piece

@@ -25,7 +25,6 @@ class ChessGame
   def run
     turns = 10
     until turns == 0
-      puts "#{@players[0].color} TURN"
       turns -= 1
       @players[0].take_turn
       toggle_players
