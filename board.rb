@@ -1,9 +1,11 @@
+require "byebug"
 
 class Board
   attr_accessor :rows
   BLANK_SPACE = "   "
-  def initialize
-    @rows = generate_board
+
+  def initialize(rows = nil)
+    @rows = rows ? rows : generate_board
     #check_all_moves
   end
 
@@ -27,12 +29,16 @@ class Board
     piece = self[movefrom]
     piece.movement
     if piece.moves.include?(moveto)
-      self[piece.pos] = BLANK_SPACE
-      piece.pos = moveto
-      self[moveto] = piece
+      direct_move(piece, moveto)
     else
       raise ChessError.new("That is not a valid move for this piece")
     end
+  end
+
+  def direct_move(piece, moveto)
+    self[piece.pos] = BLANK_SPACE
+    piece.pos = moveto
+    self[moveto] = piece
   end
 
   def in_bounds?(coords)
@@ -65,13 +71,17 @@ class Board
   end
 
   def break_check?(piece, move, color)
-    origin = piece.pos
-    self[origin] = BLANK_SPACE
-    self[move] = piece
-    break_check = in_check?(color)
-    self[move] = BLANK_SPACE
-    self[origin] = piece
-    break_check
+    dupped = dup_board
+    dupped.direct_move(piece, moveto)
+    good_move = !dupped.in_check?(color)
+    good_move
+  end
+
+  def dup_board
+    dupped = Board.new(@rows.deep_dup)
+    dupped.select_pieces(:white).each{ |piece| piece.redefine(dupped) }
+    dupped.select_pieces(:black).each{ |piece| piece.redefine(dupped) }
+    dupped
   end
 
   def select_pieces(color)

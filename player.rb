@@ -12,11 +12,15 @@ class Player
     result = nil
     until result
       @display.render
-      print @color == :white ? "⚪ " : "⚫ "
-      puts "#{@color} in check? #{@board.in_check?(@color)}"
+      notifications
       result = @display.get_input
     end
     result
+  end
+
+  def notifications
+    print @color == :white ? "⚪ " : "⚫ "
+    puts "#{@color} in check? #{@board.in_check?(@color)}"
   end
 
   def take_turn
