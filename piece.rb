@@ -2,7 +2,7 @@ require "byebug"
 
 class Piece
   attr_reader :pos, :color, :name
-  attr_accessor :moves
+  attr_accessor :moves, :moved
 
   def initialize(board, pos, color)
     @board = board
@@ -10,6 +10,7 @@ class Piece
     @color = color
     @name = self.class.to_s
     @moves = []
+    @moved = false
   end
 
   DisplayPiece = {
@@ -56,7 +57,7 @@ module SlidingPiece
 
   def movement
     @moves = []
-    get_local_movement.map do |move|
+    get_local_movement.each do |move|
       tile = Piece.add_coords(@pos, move)
       while @board.in_bounds?(tile)
         if @board.empty?(tile)
@@ -140,27 +141,42 @@ class Pawn < Piece
 
   def movement
     @moves = []
-    @moves.push pawn_movement
-    @moves.push *pawn_attack
+    @moves.concat(pawn_movement)
+    @moves.concat(pawn_attack)
+
     @moves
   end
 
   def get_local_movement
-    @color == :black ? [1,0] : [-1,0]
+    if  @moved
+      @color == :black ? [[1,0]] : [[-1,0]]
+    else
+      @color == :black ? [[1,0],[2,0]] : [[-1,0],[-2,0]]
+    end
   end
 
   def pawn_movement
-    move = Piece.add_coords(@pos, get_local_movement)
-    return [] unless @board.empty?(move)
-    move
+    moves = get_local_movement
+    moves.map! { |move| Piece.add_coords(@pos, move) }
+    moves.reject! do |coords|
+      !@board.empty?(coords) || !@board.in_bounds?(coords)
+    end
+    moves
   end
 
   def pawn_attack
-    attack_pos = @colors == :black ? [[1,-1], [1,1]] : [[-1,-1], [-1,1]]
+    attack_pos = @color == :black ? [[1,-1], [1,1]] : [[-1,-1], [-1,1]]
     attack_pos.map! { |move| Piece.add_coords(@pos, move) }
     attack_pos.reject! do |coords|
-      @board.empty?(coords) || !@board.in_bounds?(coord)
+      if !@board.empty?(coords) && @board[coords].nil?
+
+        @board[coords].color == @color
+      else
+        @board.empty?(coords) || !@board.in_bounds?(coords)
+      end
     end
+
+    attack_pos
   end
 
 end

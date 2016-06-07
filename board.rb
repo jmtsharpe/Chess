@@ -1,19 +1,20 @@
 require "byebug"
 
 class Board
-  attr_accessor :rows
+  attr_accessor :rows, :piece, :color
   BLANK_SPACE = "   "
 
   def initialize(rows = nil)
     @rows = rows ? rows : generate_board
-    #check_all_moves
+    @piece = false
+    @color = nil
   end
 
   def inspect
     @rows.each do |row|
       p row.map{|el| el == BLANK_SPACE ? "                " : el}
     end
-    nil
+    
   end
 
   def check_all_moves
@@ -32,6 +33,29 @@ class Board
     @rows[row][col] = mark
   end
 
+# ||||||
+# pick up piece logic
+
+def pick(coords)
+  if empty?(coords) || !same_color?(coords)
+    return
+  else
+    @piece = self[coords]
+  end
+
+end
+
+# |||||
+# same color checks
+
+def same_color(coords)
+  self[coords].color == @color
+end
+
+
+
+# ||||||
+
   def move(movefrom, moveto)
     piece = self[movefrom]
     piece.movement
@@ -46,6 +70,7 @@ class Board
     self[piece.pos] = BLANK_SPACE
     piece.pos = moveto
     self[moveto] = piece
+    piece.moved = true
   end
 
   def in_bounds?(coords)
@@ -62,8 +87,9 @@ class Board
     opp_color = color == :white ? :black : :white
     throne = find_king(color).pos
     select_pieces(opp_color).each do |piece|
-      debugger if piece.is_a? Queen
-      return true if piece.movement.include?(throne)
+      if piece.is_a? Queen
+        return true if piece.movement.include?(throne)
+      end
     end
     false
   end
@@ -128,15 +154,16 @@ class Board
   def command_row(coords)
     color = coords[0] == 0 ? :black : :white
     case coords.last
-    when 0 ; Rook.new(self, coords, color)
-    when 1 ; Knight.new(self, coords, color)
-    when 2 ; Bishop.new(self, coords, color)
-    when 3 ; King.new(self, coords, color)
-    when 4 ; Queen.new(self, coords, color)
-    when 5 ; Bishop.new(self, coords, color)
-    when 6 ; Knight.new(self, coords, color)
-    when 7 ; Rook.new(self, coords, color)
-    else raise "error"
+      when 0 ; Rook.new(self, coords, color)
+      when 1 ; Knight.new(self, coords, color)
+      when 2 ; Bishop.new(self, coords, color)
+      when 3 ; King.new(self, coords, color)
+      when 4 ; Queen.new(self, coords, color)
+      when 5 ; Bishop.new(self, coords, color)
+      when 6 ; Knight.new(self, coords, color)
+      when 7 ; Rook.new(self, coords, color)
+    else
+      raise "error"
     end
   end
 

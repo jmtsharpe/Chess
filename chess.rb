@@ -13,13 +13,14 @@ class ChessGame
   def initialize(chessboard)
     @chessboard = chessboard
     @players = [
-      Player.new(:black, chessboard),
-      Player.new(:white, chessboard)
+      Player.new(:white, chessboard),
+      Player.new(:black, chessboard)
     ]
   end
 
   def toggle_players
     @players.rotate!
+    @chessboard.color = @players.first
   end
 
   def run
@@ -31,7 +32,6 @@ class ChessGame
   end
 
   def checkmate?
-    # debugger
     @chessboard.checkmate?(@players[0].color)
   end
 
@@ -44,11 +44,6 @@ class ChessGame
 end
 
 board = Board.new
-board.move([1,1], [2,1])
-board.move([2,1], [3,1])
-board.move([1,2], [2,2])
-board.move([6,3], [5,3])
-board.move([7,4], [3,0])
 
 
 game = ChessGame.new(board)
