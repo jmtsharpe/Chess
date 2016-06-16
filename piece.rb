@@ -168,8 +168,7 @@ class Pawn < Piece
     attack_pos = @color == :black ? [[1,-1], [1,1]] : [[-1,-1], [-1,1]]
     attack_pos.map! { |move| Piece.add_coords(@pos, move) }
     attack_pos.reject! do |coords|
-      if !@board.empty?(coords) && @board[coords].nil?
-
+      if !@board.empty?(coords) && !@board[coords].nil?
         @board[coords].color == @color
       else
         @board.empty?(coords) || !@board.in_bounds?(coords)

@@ -19,13 +19,29 @@ class Player
   end
 
   def notifications
-    print @color == :white ? "⚪ " : "⚫ "
-    puts "#{@color} in check? #{@board.in_check?(@color)}"
+    puts @color == :white ? "⚪ " : "⚫ "
+    if @board.in_check?(@color)
+      puts "#{@color} in check"
+    end
   end
 
   def take_turn
     movefrom = make_selection
     moveto = move
+
+
+    valid_move = false
+    until valid_move
+      unless @board.break_check?(@board[movefrom], moveto, @color)
+        puts "You can't move into check"
+        movefrom = make_selection
+        moveto = move
+        puts @board.break_check?(@board[movefrom], moveto, @color)
+      else
+        valid_move = true
+      end
+    end
+
     @board.move(movefrom, moveto)
     @display.render
   rescue ChessError => e

@@ -39,6 +39,33 @@ class ChessGame
     puts "CHECKMATE"
     puts "#{@players[0].color.to_s.capitalize} topples their King"
     puts "#{@players[1].color.to_s.capitalize} Wins!"
+    play_again?
+  end
+
+  def play_again?
+    puts "Play again?"
+    puts "Y/N"
+    answer = gets.chomp
+
+    case answer.downcase
+    when "y"
+      restart
+    when "yes"
+      restart
+    when "n"
+      puts "GoodBye!"
+    when "no"
+      puts "GoodBye!"
+    else
+      puts "Huh?"
+      play_again?
+    end
+  end
+
+  def restart
+    board = Board.new
+    game = ChessGame.new(board)
+    game.run
   end
 
 end
